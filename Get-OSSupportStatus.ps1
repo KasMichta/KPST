@@ -24,3 +24,5 @@ Function Get-OSSupportStatus {
     }
 
 }
+
+Get-OSSupportStatus
