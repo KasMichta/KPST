@@ -9,4 +9,5 @@ else {
     Import-Module -Name PSWindowsUpdate
 }
 
-Install-WindowsUpdate -Title "Feature Update" -AcceptAll -Install -IgnoreReboot -IgnoreRebootRequired| Write-Output
+Install-WindowsUpdate -Title "Feature Update" -AcceptAll -Install -IgnoreReboot -IgnoreRebootRequired -Confirm:$false
+
