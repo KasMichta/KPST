@@ -1,2 +1,2 @@
 # KPST
-A collection of Powershell Tools to use for automating Windows device management.
+A collection of Powershell tools to use for automating Windows device management.
