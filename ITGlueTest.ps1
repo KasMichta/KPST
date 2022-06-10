@@ -27,6 +27,6 @@ Function Sent-BLtoITG {
         $Configs = Invoke-RestMethod -Uri "$APIEndpoint/organizations/$Orgid/relationships/configurations?filter[serial_number]=$localserial" -Method Get -Headers $headers
         $TaggedResource = $Configs.data | Select-Object -First 1
     }
-
+    Write-Output $TaggedResource
 
 }
