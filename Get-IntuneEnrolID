@@ -1,0 +1,14 @@
+Function Get-IntuneEnrolID {
+    try {
+        $guid = (Get-childitem 'C:\ProgramData\Microsoft\DMClient' -ErrorAction Stop | Select-Object -First 1 -ExpandProperty name) -match '.{8}-.{4}-.{4}-.{4}-.{12}s'
+
+        if ($guid){
+            Write-Output "Device Enrolled in Intune Device Management, EnrollmentID:`n$($Matches[0])"
+        }else{
+            Write-Output "Unexpected: DMClient Folder found but no Enrollment GUID found"
+        }
+    }
+    catch [System.Management.Automation.ItemNotFoundException]{
+        Write-Output "No Intune Enrollment ID found"
+    }
+}
