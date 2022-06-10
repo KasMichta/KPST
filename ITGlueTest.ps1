@@ -1,6 +1,16 @@
 
 Function Sent-BLtoITG {
-    
+
+    [CmdletBinding()]
+    param (
+        [Parameter()]
+        [string]
+        $OrgID,
+        [Parameter()]
+        [string]
+        $APIKey
+    )
+
     $APIEndpoint = "https://api.eu.itglue.com"
 
     $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
