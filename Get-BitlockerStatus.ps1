@@ -125,12 +125,14 @@ $status = Get-BitlockerStatus
 switch ($status) {
     "Protection On" {
         $RecoveryPass = Get-BLRP
+
+        Write-Output "Protection is Enabled"
     }
     "Protection Off" {
         $RecoveryPass = Get-BLRP
         Try {
             Manage-BDE -on C:
-            Write-Output "Protection turned On."
+            Write-Output "Protection was disabled, Enabling Protection..."
         }
         catch {
             Write-Output "Could not enable Protection"
