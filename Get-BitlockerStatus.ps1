@@ -42,7 +42,7 @@ Function Send-ToITGlue {
     $PasswordObjectName = "$($Env:COMPUTERNAME) - C:"
 
     # Check if password for device already exists
-    $PassName = Invoke-RestMethod -Uri "$APIEndpoint/organizations/$Orgid/relationships/passwords?filter[name]=$PasswordObjectName" -Method Get -Headers $headers
+    $PassName = Invoke-RestMethod -Uri "$APIEndpoint/organizations/$Orgid/relationships/passwords?filter[name]=$PasswordObjectName&filter[archived]=false" -Method Get -Headers $headers
 
     # Get local serial number - used later to add 'related item' to password.
     $localserial = (get-ciminstance win32_bios).serialnumber
@@ -99,7 +99,21 @@ Function Send-ToITGlue {
 
 
     }else{
-        Write-Output "More than 1 Password found with same name, please delete duplicate record."
+        $PassID = $PassName.data.id | Select-Object -First 1
+        Write-Output "More than 1 Existing IT Glue record found. Updating first result (ITGlueID: $PassID)"
+        Write-Output "Please Archive/Duplicate duplicate records:"
+        $PassName.data.id | Select-object -Skip 1| ForEach-Object {Write-Output "$_"}
+        $PasswordContent = Invoke-RestMethod -Uri "$APIEndpoint/organizations/$Orgid/relationships/passwords/$PassID" -Method Get -Headers $headers
+        
+        # If Password in IT Glue same as local
+        if ($($PasswordContent.data.attributes.password.trim()) -eq $RecoveryPass) {
+            Write-Output "IT Glue Record already contains correct password."
+        }
+        else {
+            # Update password in IT Glue
+            Write-Output "Updating existing IT Glue record with new password."
+            Invoke-RestMethod -Uri "$APIEndpoint/organizations/$Orgid/relationships/passwords/$PassID" -Method Patch -Body $body -Headers $headers 
+        }
     }
     
 
