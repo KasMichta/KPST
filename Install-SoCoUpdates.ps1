@@ -34,6 +34,7 @@ if ($Updates) {
 
 	# Add Feature Updates to the Update Collection
 	foreach ($Update in $Updates) {
+		Write-Output "$($Update.Name) - Attempting Install"
 		$UpdatesToInstall.Add($Update) | Out-Null
 	}
 
@@ -51,8 +52,11 @@ if ($Updates) {
 	if ($InstallResult.ResultCode -eq 2 -and !(IsUserLoggedIn)) {
                 Write-Output "Updates Installed, User Not Logged in - Rebooting..."
 		Restart-Computer
-	} else {
+	} elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
+		Write-Output "----Install Successful----"
 		Write-Output "User Logged in, Reboot cancelled."
+	}else{
+		Write-Output "!!!-Install Unsuccessful-!!!"
 	}
 } else {
 	Write-Output "No relevant Updates are available."
