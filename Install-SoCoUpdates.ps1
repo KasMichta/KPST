@@ -55,5 +55,5 @@ if ($Updates) {
 		Write-Output "User Logged in, Reboot cancelled."
 	}
 } else {
-	Write-Output "No relevAnt Updates are available."
+	Write-Output "No relevant Updates are available."
 }
