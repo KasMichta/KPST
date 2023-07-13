@@ -60,5 +60,5 @@ if ($Updates) {
 	}
 }
 else {
-	Write-Output 'No relevant Updates are available.'
+	Write-Output 'No relevant updates are available.'
 }
