@@ -48,8 +48,17 @@ if ($Updates) {
 	# Reboot the device if the installation was successful and no user is logged in
 	if ($InstallResult.ResultCode -eq 2 -and !(IsUserLoggedIn)) {
 		Write-Output '----Install Successful----'
+		Try {
+			Restart-Computer -ErrorAction Stop
+		}
+		Catch [System.InvalidOperationException] {
+			Write-Output 'User Logged in, Reboot cancelled.'
+		}
+		Catch {
+			Write-Output 'Cannot Reboot Device'
+		}
 		Write-Output 'Updates Installed, User Not Logged in - Rebooting...'
-		Restart-Computer
+		
 	}
  elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
 		Write-Output '----Install Successful----'
