@@ -34,7 +34,7 @@ if ($Updates) {
 
 	# Add Feature Updates to the Update Collection
 	foreach ($Update in $Updates) {
-		Write-Output "$($Update.Name) - Attempting Install"
+		Write-Output "$($Update.Title) - Attempting Install"
 		$UpdatesToInstall.Add($Update) | Out-Null
 	}
 
