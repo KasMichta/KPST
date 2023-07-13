@@ -60,12 +60,21 @@ if ($Updates) {
 		Write-Output 'Updates Installed, User Not Logged in - Rebooting...'
 		
 	}
- elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
+	elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
 		Write-Output '----Install Successful----'
 		Write-Output 'User Logged in, Reboot cancelled.'
 	}
+	elseif ($InstallResult.ResultCode -eq 3){
+		Write-Output '----Install Successful !WITH ERRORS!----'
+	}
+	elseif ($InstallResult.ResultCode -eq 4){
+		Write-Output '!!!!FAILED UPDATES!!!!'
+	}
+	elseif ($InstallResult.ResultCode -eq 5){
+		Write-Output '!!!!ABORTED UPDATES!!!!'
+	}
 	else {
-		Write-Output '!!!-Install Unsuccessful-!!!'
+		Write-Output 'Error with retrieving result of installation'
 	}
 }
 else {
