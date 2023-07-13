@@ -20,9 +20,9 @@ $SearchResult = $UpdateSearcher.Search("IsInstalled=0")
 $Updates = New-Object System.Collections.ArrayList
 
 # Filter for Feature Updates
-$FeatureUpdates = $SearchResult.Updates | Where-Object { $_.Title -match "Feature update to Windows" } | % {[void]$Updates.add($_)}
+$SearchResult.Updates | Where-Object { $_.Title -match "Feature update to Windows" } | % {[void]$Updates.add($_)}
 # Filter for Critical, Security, Rollup, and Definition updates
-$CriticalUpdates = $SearchResult.Updates | Where-Object {$_.Categories | Where-Object {$_.Name -match "Critical|Security|Update rollup|Definition" }} | % {[void]$Updates.add($_)}
+$SearchResult.Updates | Where-Object {$_.Categories | Where-Object {$_.Name -match "Critical|Security|Update rollup|Definition" }} | % {[void]$Updates.add($_)}
 
 # If there are Updates available, proceed with the installation process
 if ($Updates) {
