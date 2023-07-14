@@ -25,56 +25,56 @@ $SearchResult.Updates | Where-Object { $_.Title -match 'Feature update to Window
 $SearchResult.Updates | Where-Object { $_.Categories | Where-Object { $_.Name -match 'Critical|Security|Update rollup|Definition' } } | ForEach-Object { [void]$Updates.add($_) }
 
 # If there are Updates available, proceed with the installation process
-if ($Updates) {
-	# Create an Update Collection to store updates to be installed
-	$UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
+if ($Updates.count -gt 0) {
 
-	# Add Feature Updates to the Update Collection
 	foreach ($Update in $Updates) {
+		# Create an Update Collection to store update to be installed
+		$UpdatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl
+
 		Write-Output "$($Update.Title) - Attempting Install"
 		$UpdatesToInstall.Add($Update) | Out-Null
-	}
 
-	# Download updates
-	$Downloader = $UpdateSession.CreateUpdateDownloader()
-	$Downloader.Updates = $UpdatesToInstall
-	$DownloadResult = $Downloader.Download()
+		# Download updates
+		$Downloader = $UpdateSession.CreateUpdateDownloader()
+		$Downloader.Updates = $UpdatesToInstall
+		$DownloadResult = $Downloader.Download()
 
-	# Install updates
-	$Installer = $UpdateSession.CreateUpdateInstaller()
-	$Installer.Updates = $UpdatesToInstall
-	$InstallResult = $Installer.Install()
+		# Install updates
+		$Installer = $UpdateSession.CreateUpdateInstaller()
+		$Installer.Updates = $UpdatesToInstall
+		$InstallResult = $Installer.Install()
 
-	# Reboot the device if the installation was successful and no user is logged in
-	if ($InstallResult.ResultCode -eq 2 -and !(IsUserLoggedIn)) {
-		Write-Output '----Install Successful----'
-		Try {
-			Restart-Computer -ErrorAction Stop
+		# Reboot the device if the installation was successful and no user is logged in
+		if ($InstallResult.ResultCode -eq 2 -and !(IsUserLoggedIn)) {
+			Write-Output '----Install Successful----'
+			Try {
+				Restart-Computer -ErrorAction Stop
+			}
+			Catch [System.InvalidOperationException] {
+				Write-Output 'User Logged in, Reboot cancelled.'
+			}
+			Catch {
+				Write-Output 'Cannot Reboot Device'
+			}
+			Write-Output 'Updates Installed, User Not Logged in - Rebooting...'
+		
 		}
-		Catch [System.InvalidOperationException] {
+		elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
+			Write-Output '----Install Successful----'
 			Write-Output 'User Logged in, Reboot cancelled.'
 		}
-		Catch {
-			Write-Output 'Cannot Reboot Device'
+		elseif ($InstallResult.ResultCode -eq 3) {
+			Write-Output '----Install Successful !WITH ERRORS!----'
 		}
-		Write-Output 'Updates Installed, User Not Logged in - Rebooting...'
-		
-	}
-	elseif ($InstallResult.ResultCode -eq 2 -and (IsUserLoggedIn)) {
-		Write-Output '----Install Successful----'
-		Write-Output 'User Logged in, Reboot cancelled.'
-	}
-	elseif ($InstallResult.ResultCode -eq 3){
-		Write-Output '----Install Successful !WITH ERRORS!----'
-	}
-	elseif ($InstallResult.ResultCode -eq 4){
-		Write-Output '!!!!FAILED UPDATES!!!!'
-	}
-	elseif ($InstallResult.ResultCode -eq 5){
-		Write-Output '!!!!ABORTED UPDATES!!!!'
-	}
-	else {
-		Write-Output 'Error with retrieving result of installation'
+		elseif ($InstallResult.ResultCode -eq 4) {
+			Write-Output '!!!!FAILED UPDATES!!!!'
+		}
+		elseif ($InstallResult.ResultCode -eq 5) {
+			Write-Output '!!!!ABORTED UPDATES!!!!'
+		}
+		else {
+			Write-Output 'Error with retrieving result of installation'
+		}
 	}
 }
 else {
