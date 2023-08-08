@@ -35,6 +35,15 @@ $searchResult = $UpdateSearcher.Search($searchString)
 
 $updates = $searchResult.Updates | Where-Object { $_.IsDownloaded -eq $false}
 
+$downloadedUpdates = $searchResult.Updates | Where-Object { $_.IsDownloaded -eq $true}
+foreach($update in $downloadedUpdates) {
+	Write-Output "----Will not attempt install----"
+	Write-Output "$($update.Title) - Already Downloaded, Skipping Installation"
+	if ($update.RebootRequired -eq $true) {
+		Write-Output 'Update Requires Reboot'
+	}
+}
+
 # If there are Updates available, proceed with the installation process
 if ($Updates.count -gt 0) {
 
