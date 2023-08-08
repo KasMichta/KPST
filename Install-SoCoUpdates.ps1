@@ -33,7 +33,7 @@ $searchString = $searchQueries -join ' or '
 
 $searchResult = $UpdateSearcher.Search($searchString)
 
-$updates = $searchResult.Updates
+$updates = $searchResult.Updates | Where-Object { $_.IsDownloaded -eq $false}
 
 # If there are Updates available, proceed with the installation process
 if ($Updates.count -gt 0) {
